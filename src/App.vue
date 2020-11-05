@@ -1,16 +1,21 @@
 <template>
   <div id="app">
-
+    <router-view></router-view>
+    <main-tab-bar></main-tab-bar>
   </div>
 </template>
 
 <script>
-import base from 'assets/css/base.css'
+  import MainTabBar from 'components/content/mainTabBar/MainTabBar'
   export default {
     name:'App',
+    components:{
+      MainTabBar
+    }
   }
 </script>
 
-<style>
-
+<style> 
+  /* style中每行样式后都要加; */
+  @import 'assets/css/base.css';
 </style>
