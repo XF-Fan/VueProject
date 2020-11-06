@@ -27,7 +27,7 @@
     margin-top: 10px;
     font-size: 14px;
     padding-bottom: 30px;
-    border-bottom: 10px solid #eee;
+    border-bottom: 5px solid #eee;
   }
 
   .recommend-item {
