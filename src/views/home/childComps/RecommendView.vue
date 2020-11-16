@@ -12,8 +12,8 @@
 <script>
   export default {
     name: "RecommendView",
-    props: {
-      recommends: {
+    props: { 
+      recommends: { //子页面中：子声明，子使用 行3 v-for循环里面的recommends ;父页面中：父传 
         type: Array,
         required: true
       }

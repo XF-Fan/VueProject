@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="wrapper">
+  <div id="app">
     <router-view></router-view>
     <main-tab-bar></main-tab-bar>
   </div>
@@ -16,6 +16,6 @@
 </script>
 
 <style> 
-  /* style中每行样式后都要加; */
+  /* style中每行样式后都要加  ;  */
   @import 'assets/css/base.css';
 </style>
