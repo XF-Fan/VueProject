@@ -3,211 +3,206 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <home-swiper :banners="banners"></home-swiper>
-    <recommend-view :recommends="recommends" />
-    <!-- 这里:recommends传到recommendView页面中了,然后子声明、子使用 -->
-    <feature-view></feature-view>
-    <!-- 本周流行，这里只是一张png图 -->
     <tab-control
-      class="tab-control"
-      :titles="['流行', '新款', '精选']" 
-    ></tab-control>
-    <goods-list :goods="goods['pop'].list"></goods-list> <!-- 默认是展示流行下的商品 -->
-
-    <ul>
-      <li>商品1</li>
-      <li>商品2</li>
-      <li>商品3</li>
-      <li>商品4</li>
-      <li>商品5</li>
-      <li>商品6</li>
-      <li>商品7</li>
-      <li>商品8</li>
-      <li>商品9</li>
-      <li>商品10</li>
-      <li>商品11</li>
-      <li>商品12</li>
-      <li>商品13</li>
-      <li>商品14</li>
-      <li>商品15</li>
-      <li>商品16</li>
-      <li>商品17</li>
-      <li>商品18</li>
-      <li>商品19</li>
-      <li>商品20</li>
-      <li>商品21</li>
-      <li>商品22</li>
-      <li>商品23</li>
-      <li>商品24</li>
-      <li>商品25</li>
-      <li>商品26</li>
-      <li>商品27</li>
-      <li>商品28</li>
-      <li>商品29</li>
-      <li>商品30</li>
-      <li>商品31</li>
-      <li>商品32</li>
-      <li>商品33</li>
-      <li>商品34</li>
-      <li>商品35</li>
-      <li>商品36</li>
-      <li>商品37</li>
-      <li>商品38</li>
-      <li>商品39</li>
-      <li>商品40</li>
-      <li>商品41</li>
-      <li>商品42</li>
-      <li>商品43</li>
-      <li>商品44</li>
-      <li>商品45</li>
-      <li>商品46</li>
-      <li>商品47</li>
-      <li>商品48</li>
-      <li>商品49</li>
-      <li>商品50</li>
-      <li>商品51</li>
-      <li>商品52</li>
-      <li>商品53</li>
-      <li>商品54</li>
-      <li>商品55</li>
-      <li>商品56</li>
-      <li>商品57</li>
-      <li>商品58</li>
-      <li>商品59</li>
-      <li>商品60</li>
-      <li>商品61</li>
-      <li>商品62</li>
-      <li>商品63</li>
-      <li>商品64</li>
-      <li>商品65</li>
-      <li>商品66</li>
-      <li>商品67</li>
-      <li>商品68</li>
-      <li>商品69</li>
-      <li>商品70</li>
-      <li>商品71</li>
-      <li>商品72</li>
-      <li>商品73</li>
-      <li>商品74</li>
-      <li>商品75</li>
-      <li>商品76</li>
-      <li>商品77</li>
-      <li>商品78</li>
-      <li>商品79</li>
-      <li>商品80</li>
-      <li>商品81</li>
-      <li>商品82</li>
-      <li>商品83</li>
-      <li>商品84</li>
-      <li>商品85</li>
-      <li>商品86</li>
-      <li>商品87</li>
-      <li>商品88</li>
-      <li>商品89</li>
-      <li>商品90</li>
-      <li>商品91</li>
-      <li>商品92</li>
-      <li>商品93</li>
-      <li>商品94</li>
-      <li>商品95</li>
-      <li>商品96</li>
-      <li>商品97</li>
-      <li>商品98</li>
-      <li>商品99</li>
-      <li>商品100</li>
-    </ul>
+        :titles="['流行', '新款', '精选']"
+        @tabClick="tabClick"
+        ref="TabControl1" v-show="isTabFixed"
+      ></tab-control>
+    <scroll class="content" ref="scroll"
+      :probe-type="3" @scroll="contentScroll"
+      :pull-up-load="true" @pullingUp="loadMore"  
+    >
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
+      <recommend-view :recommends="recommends" />
+      <!-- 这里:recommends传到recommendView页面中了,然后子声明、子使用 -->
+      <feature-view></feature-view>
+      <!-- 本周流行，这里只是一张png图 -->
+      <tab-control
+        :titles="['流行', '新款', '精选']"
+        @tabClick="tabClick"
+        ref="TabControl2"
+      ></tab-control>
+      <goods-list :goods="showGoods"></goods-list>
+      <!-- 默认是展示流行下的商品 -->
+    </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
 <script>
+// 私人组件导入部分
 import HomeSwiper from "./childComps/HomeSwiper"; //首页轮播图
 import RecommendView from "./childComps/RecommendView"; //轮播图下面的推荐信息
 import FeatureView from "./childComps/FeatureView"; //本周流行，单张png图片
-
+// 共用组件导入部分
 import NavBar from "components/common/navbar/NavBar"; //购物街
 import TabControl from "components/content/tabControl/TabControl"; //本周流行下面的3个切换按钮
 import GoodsList from "components/content/goods/GoodsList"; //商品显示区域
-
+import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backTop/BackTop";
 import { getHomeMultidata, getHomeGoods } from "network/home";
-// http://152.136.185.210:8000/api/w6/home/data?type=pop&page=1
+import {debounce} from "common/utils";
+
 export default {
   name: "Home",
   components: {
     HomeSwiper, //首页轮播图
     RecommendView, //轮播图下面的推荐信息
     FeatureView,
-
     NavBar,
     TabControl,
     GoodsList,
+    Scroll,
+    BackTop,
   },
   data() {
     return {
       banners: [],
       recommends: [],
       goods: {
-        pop: { page: 1, list: [] }, //流行
-        new: { page: 1, list: [] }, //新品
-        sell: { page: 1, list: [] }, //精选
+        pop: {
+          page: 1,
+          list: [],
+        },
+        new: {
+          page: 1,
+          list: [],
+        },
+        sell: {
+          page: 1,
+          list: [],
+        },
       },
+      currentType: "pop",
+      isShowBackTop: false, //是否显示返回顶部按钮
+      tabOffsetTop:0, //tabOffsetTop判断位置高度
+      isTabFixed:false,  //是否显示吸顶效果
+      saveY:0,
     };
   },
+  computed: {
+    showGoods() {
+      return this.goods[this.currentType].list;
+    },
+  },
+  activated() {
+    this.$refs.scroll.scrollTo(0,this.saveY,0); //(x,y,time)
+    this.$refs.scroll.refresh(); //刷新，防止莫名其妙的错误
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.getScrollY();
+  },
   created() {
-    //数据请求和处理都在这里的话，会很臃肿不清晰，所以这里只做请求，处理数据的部分放到methods里
-    this.getHomeMultidata(); //不加this.相当于是在使用import导入过来的函数           这里请求的数据应该是轮播图的
+    // 1.请求轮播等数据
+    this._getHomeMultidata();
+    // 2.请求商品数据
+    this._getHomeGoods("pop");
+    this._getHomeGoods("new");
+    this._getHomeGoods("sell");
+  },
+  destroyed() {
+    console.log('销毁');
+  },
+  mounted() {
+    // 1.图片加载完成的事件监听
+    const refresh = debounce(this.$refs.scroll.refresh,100);
+    //定义常量用来接收debounce里面的回调函数(闭包)
+    this.$bus.$on("itemImageLoad", () => {
+      refresh()
+      // this.$refs.scroll && this.$refs.scroll.refresh(); 
+      //加个this.$refs.scroll判断后，在快速点击首页和分类时不会报错了
+    });
 
-    this.getHomeGoods('pop');//直接在渲染完成时请求三种分类的数据(相当于默认显示的数据)         这里显示的是一个个的商品
-    this.getHomeGoods('new');
-    this.getHomeGoods('sell');
+    // 2.获取tabControl的offsetTop
+    // 所有的组件都有一个属性$el:  用于获取组件中的元素
   },
   methods: {
-    getHomeMultidata() {
+    
+    /* 网络请求相关*/
+    _getHomeMultidata() {
       getHomeMultidata().then((res) => {
-        //network/homejs导出的函数
-        // this.result = res; 这行不要 这里的res在函数结束后会回收，所以要在data里面定义变量用来接收存储这个res数据。data里面定义的变量是不会被回收的
-        this.banners = res.data.data.banner.list;
-        this.recommends = res.data.data.recommend.list;
+        // console.log(res);
+        this.banners = res.data.banner.list;
+        this.recommends = res.data.recommend.list;
       });
     },
-    getHomeGoods(type) {
-      const page = this.goods[type].page + 1
+    _getHomeGoods(type) {
+      // 获取页码
+      const page = this.goods[type].page;
       getHomeGoods(type, page).then((res) => {
-        // console.log(res.data.data.list);
-        const newList = res.data.data.list
-        this.goods[type].list.push(...newList)
+        const newList = res.data.list;
+        this.goods[type].list.push(...newList);
+        this.goods[type].page += 1;
+
+        this.$refs.scroll.finishPullUp();
       });
     },
+    /* 事件监听相关 */
+    tabClick(index) {
+      switch (index) {
+        case 0:
+          this.currentType = "pop";
+          break;
+        case 1:
+          this.currentType = "new";
+          break;
+        case 2:
+          this.currentType = "sell";
+          break;
+      }
+      this.$refs.TabControl1.currentIndex = index;
+      this.$refs.TabControl2.currentIndex = index;
+    },
+    backClick() {
+      // console.log('返回顶部');
+      this.$refs.scroll.scrollTo(0, 0, 1000);
+    },
+    contentScroll(position) {
+      // 1.判断backtop是否显示
+      // this.isShowBackTop = -position.y > 1000
+      this.isShowBackTop = Math.abs(position.y) > 1000;
+      // Math.abs(取绝对值) 因为默认position.y都是负值
+
+      // 2.决定tabcontrol是否吸顶(position:fixed)
+      //  this.isTabFixed  = (- position.y) > this.tabOffsetTop
+       this.isTabFixed = position.y <= -this.tabOffsetTop;
+    },
+    loadMore() {
+      // console.log('上拉加载更多');
+      this._getHomeGoods(this.currentType);
+    },
+    swiperImageLoad(){
+      this.tabOffsetTop = this.$refs.TabControl2.$el.offsetTop;
+      //  console.log(this.$refs.TabControl.$el.offsetTop);
+    }
   },
 };
 </script>
 
 <style scoped>
 #home {
-  height: 100vh;
+  height: 100vh;/* vh：viewport height  视口高度*/
+  /* padding-top: 44px; */
   position: relative;
 }
 .home-nav {
   background-color: var(--color-tint);
   color: #fff;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
+  position: relative;
   z-index: 9;
 }
+
 .tab-control {
-  /* 这里sticky属性无法生效，后续解决思路是使用fixed属性，通过判断Scroll属性动态添加删除fixed属性 */
-  /* position: -webkit-sticky;
-  position: sticky; */
-  top: 44px;
-  z-index: 9;
-}
+    position: relative;
+    z-index: 9;
+  }
 .content {
-  overflow: hidden;
   position: absolute;
   top: 44px;
   bottom: 49px;
   left: 0;
   right: 0;
+  height: calc(100% - 49px);
+  /* 这里我减49px,是因为.home里面已经padding-top了44px,所以只需要减去底部tabbar的高度49px */
 }
 </style>

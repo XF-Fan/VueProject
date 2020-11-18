@@ -1,7 +1,8 @@
 <template>
   <div class="goods">
     <goods-list-item v-for="(item,index) in goods" :key="index" :goods-item="item"></goods-list-item>
-    {{goods}}
+    <!-- {{goods}}  凸(艹皿艹 )。这东西多出来的json。找了半年-->
+    <!-- goods是从父页面home那里传递过来的，这里是测试能否正常接收到，忘了注释掉产生了上面的json显示错误 -->
   </div>
 </template>
 
@@ -28,10 +29,6 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content:space-evenly;
-
-
-    /* 这里我先给添加一个样式，保持底部导航栏和视频显示的样式一样，不会被json数据把goods这个div撑宽使的导航栏显示一部分 */
-    overflow: hidden;
   }
 
    

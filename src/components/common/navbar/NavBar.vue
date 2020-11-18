@@ -1,31 +1,38 @@
 <template>
   <div class="nav-bar">
-    <div class="left"><slot name="left"></slot></div>
-    <div class="center"><slot name="center"></slot></div>
-    <div class="right"><slot name="right"></slot></div>
+    <div class="left">
+      <slot name="left"></slot>
+    </div>
+    <div class="center">
+      <slot name="center"></slot>
+    </div>
+    <div class="right">
+      <slot name="right"></slot>
+    </div>
   </div>
 </template>
 
 <script>
-export default {
-  name:'NavBar'
-}
+  export default {
+    name: 'NavBar'
+  }
 </script>
 
 <style scoped>
-  .nav-bar{
+  .nav-bar {
     display: flex;
     height: 44px;
     line-height: 44px;
-    box-shadow: 0 -1px 0 inset rgba(0,0,0,0.3)
+    box-shadow: 0 -1px 0 inset rgba(0, 0, 0, 0.3)
   }
-  .left,.right{
+  .left,
+  .right {
     width: 60px;
   }
-  .center{
+  .center {
     flex: 1;
     text-align: center;
-    color: white;
+    /* color: white; */
     font-size: 20px;
   }
 </style>

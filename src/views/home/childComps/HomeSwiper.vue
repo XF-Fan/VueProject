@@ -3,7 +3,7 @@
     <swiper-item v-for="(item, index) in banners" :key="index">
       <!-- 最新的vue中使用v-for必须绑定key -->
       <a :href="item.link">
-        <img :src="item.image" alt="" />
+        <img :src="item.image" alt="" @load="imageLoad"/>
       </a>
     </swiper-item>
   </swiper>
@@ -28,6 +28,20 @@
     components: {
       Swiper,
       SwiperItem,
+    },
+    data() {
+      return {
+        isLoad:false
+      }
+    },
+    methods: {
+      imageLoad(){
+         if(!this.isLoad){
+           this.$emit('swiperImageLoad');
+           this.isLoad = true;
+        }
+       
+      }
     },
   };
 </script>
